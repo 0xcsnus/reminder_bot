@@ -1,0 +1,28 @@
+service: serverless
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-1
+  stage: dev
+
+plugins:
+  # - serverless-offline
+  
+functions:
+  reminder:
+    handler: handler.remind
+    events: 
+      - schedule:
+          rate: rate(1 minute) #your cron expression to run daily e.g cron(15 10 * * ? *)
+          input: {'name': 'daily_reminder'}
+      - schedule:
+          rate: rate(2 minutes) #your cron expression to run weekly e.g cron(0 18 ? * MON *)
+          input: {'name': 'weekly_reminder'}
+      - http:
+          method: ANY
+          path: /instant
+          cors: true
+
